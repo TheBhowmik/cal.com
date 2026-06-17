@@ -106,8 +106,8 @@ export const getServerSideProps: GetServerSideProps<UserPageProps> = async (cont
 
   let orgDomain = null;
   if (isValidOrgDomain) {
-  orgDomain = currentOrgDomain;
-}
+    orgDomain = currentOrgDomain;
+  }
 
   const redirect = await handleOrgRedirect({
     slugs: usernameList,
@@ -238,6 +238,7 @@ export async function getUsersInOrgContext(
     return usersInOrgContext;
   }
 
+  
   return await userRepo.findPlatformMembersByUsernames({
     usernameList,
   });
