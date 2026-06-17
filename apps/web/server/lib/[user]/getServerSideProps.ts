@@ -238,7 +238,6 @@ export async function getUsersInOrgContext(
     return usersInOrgContext;
   }
 
-  
   return await userRepo.findPlatformMembersByUsernames({
     usernameList,
   });
