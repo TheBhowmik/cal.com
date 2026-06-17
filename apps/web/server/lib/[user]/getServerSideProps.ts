@@ -1,8 +1,4 @@
-import type { EmbedProps } from "app/WithEmbedSSR";
-import type { GetServerSideProps, GetServerSidePropsContext } from "next";
-import type { z } from "zod";
-
-import { orgDomainConfig } from "@calcom/features/ee/organizations/lib/orgDomains";
+import { encode } from "node:querystring";
 import { getUsernameList } from "@calcom/features/eventtypes/lib/defaultEvents";
 import { getEventTypesPublic } from "@calcom/features/eventtypes/lib/getEventTypesPublic";
 import { getBrandingForUser } from "@calcom/features/profile/lib/getBranding";
@@ -18,8 +14,10 @@ import type { EventType, User } from "@calcom/prisma/client";
 import { RedirectType } from "@calcom/prisma/enums";
 import type { EventTypeMetaDataSchema } from "@calcom/prisma/zod-utils";
 import type { UserProfile } from "@calcom/types/UserProfile";
-
 import { handleOrgRedirect } from "@lib/handleOrgRedirect";
+import type { EmbedProps } from "app/WithEmbedSSR";
+import type { GetServerSideProps } from "next";
+import type { z } from "zod";
 
 const log: ReturnType<typeof logger.getSubLogger> = logger.getSubLogger({
   prefix: ["[[pages/[user]]]"],
@@ -166,7 +164,16 @@ export const getServerSideProps: GetServerSideProps<UserPageProps> = async (cont
     darkBrandColor: branding.darkBrandColor ?? DEFAULT_DARK_BRAND_COLOR,
     allowSEOIndexing: user.allowSEOIndexing ?? true,
     username: user.username,
-    organization: user.profile.organization,
+    organization: user.profile.organization
+      ? {
+          requestedSlug: null,
+          slug: user.profile.organization.slug,
+          id: user.profile.organization.id,
+          brandColor: user.profile.organization.brandColor,
+          darkBrandColor: user.profile.organization.darkBrandColor,
+          theme: user.profile.organization.theme,
+        }
+      : null,
   };
 
   const dataFetchEnd = Date.now();
